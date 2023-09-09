@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -32,9 +28,29 @@ use function sprintf;
 final class CheckExceptionsTest extends TestCase
 {
     /**
+     * @dataProvider provideListOfRuleNames
+     *
+     * @test
+     */
+    public function ruleHasAnExceptionWhichHasValidApi(string $ruleName): void
+    {
+        $exceptionClass = 'Respect\\Validation\\Exceptions\\' . $ruleName . 'Exception';
+        self::assertTrue(
+            class_exists($exceptionClass),
+            sprintf('Expected exception class to exist: %s.', $ruleName)
+        );
+
+        $reflectionClass = new ReflectionClass($exceptionClass);
+        self::assertTrue(
+            $reflectionClass->isSubclassOf(ValidationException::class),
+            'Every Respect/Validation exception must extend ValidationException.'
+        );
+    }
+
+    /**
      * @return string[][]
      */
-    public function provideListOfRuleNames(): array
+    public static function provideListOfRuleNames(): array
     {
         $rulesDirectory = 'library/Rules';
         $rulesDirectoryIterator = new DirectoryIterator($rulesDirectory);
@@ -63,25 +79,5 @@ final class CheckExceptionsTest extends TestCase
         }
 
         return $ruleNames;
-    }
-
-    /**
-     * @dataProvider provideListOfRuleNames
-     *
-     * @test
-     */
-    public function ruleHasAnExceptionWhichHasValidApi(string $ruleName): void
-    {
-        $exceptionClass = 'Respect\\Validation\\Exceptions\\' . $ruleName . 'Exception';
-        self::assertTrue(
-            class_exists($exceptionClass),
-            sprintf('Expected exception class to exist: %s.', $ruleName)
-        );
-
-        $reflectionClass = new ReflectionClass($exceptionClass);
-        self::assertTrue(
-            $reflectionClass->isSubclassOf(ValidationException::class),
-            'Every Respect/Validation exception must extend ValidationException.'
-        );
     }
 }

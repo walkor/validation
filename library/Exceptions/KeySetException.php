@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -21,6 +17,7 @@ use function count;
 final class KeySetException extends GroupedValidationException implements NonOmissibleException
 {
     public const STRUCTURE = 'structure';
+    public const STRUCTURE_EXTRA = 'structure_extra';
 
     /**
      * {@inheritDoc}
@@ -30,11 +27,8 @@ final class KeySetException extends GroupedValidationException implements NonOmi
             self::NONE => '所有必需的规则都必须传递给 {{name}}',
             self::SOME => '这些规则必须传递给 {{name}}',
             self::STRUCTURE => '必须有键 {{keys}}',
-        ],
-        self::MODE_NEGATIVE => [
-            self::NONE => '这些规则都不能传递给 {{name}}',
-            self::SOME => '这些规则不能传递给 {{name}}',
-            self::STRUCTURE => '不能有键 {{keys}}',
+
+            self::STRUCTURE_EXTRA => '不能有键 {{keys}}',
         ],
     ];
 
@@ -43,6 +37,10 @@ final class KeySetException extends GroupedValidationException implements NonOmi
      */
     protected function chooseTemplate(): string
     {
+        if (count($this->getParam('extraKeys'))) {
+            return self::STRUCTURE_EXTRA;
+        }
+
         if (count($this->getChildren()) === 0) {
             return self::STRUCTURE;
         }

@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -29,7 +25,7 @@ final class ExtensionTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         return [
             'txt' => [new Extension('txt'), 'filename.txt'],
@@ -37,16 +33,16 @@ final class ExtensionTest extends RuleTestCase
             'inc' => [new Extension('inc'), 'filename.inc'],
             'bz2' => [new Extension('bz2'), 'filename.foo.bar.bz2'],
             'php' => [new Extension('php'), new SplFileInfo(__FILE__)],
-            'png' => [new Extension('png'), $this->getFixtureDirectory() . 'valid-image.png'],
-            'gif' => [new Extension('gif'), $this->getFixtureDirectory() . 'valid-image.gif'],
-            'file-invalid' => [new Extension('png'), $this->getFixtureDirectory() . 'invalid-image.png'],
+            'png' => [new Extension('png'), self::fixture('valid-image.png')],
+            'gif' => [new Extension('gif'), self::fixture('valid-image.gif')],
+            'file-invalid' => [new Extension('png'), self::fixture('invalid-image.png')],
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         return [
             'jpg' => [new Extension('jpg'), 'filename.txt'],

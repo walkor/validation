@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -29,9 +25,19 @@ use Respect\Validation\Test\RuleTestCase;
 final class LanguageCodeTest extends RuleTestCase
 {
     /**
+     * @test
+     */
+    public function itShouldThrowAnExceptionWhenSetIsInvalid(): void
+    {
+        $this->expectExceptionObject(new ComponentException('"foo" is not a valid language set for ISO 639'));
+
+        new LanguageCode('foo');
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         $sutAlpha2 = new LanguageCode(LanguageCode::ALPHA2);
         $sutAlpha3 = new LanguageCode(LanguageCode::ALPHA3);
@@ -51,7 +57,7 @@ final class LanguageCodeTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         $sutAlpha2 = new LanguageCode(LanguageCode::ALPHA2);
         $sutAlpha3 = new LanguageCode(LanguageCode::ALPHA3);
@@ -68,15 +74,5 @@ final class LanguageCodeTest extends RuleTestCase
             'alpha-3: empty' => [$sutAlpha3, ''],
             'alpha-3: null' => [$sutAlpha3, ''],
         ];
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldThrowAnExceptionWhenSetIsInvalid(): void
-    {
-        $this->expectExceptionObject(new ComponentException('"foo" is not a valid language set for ISO 639'));
-
-        new LanguageCode('foo');
     }
 }

@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -29,7 +25,7 @@ use const PHP_INT_MAX;
  *
  * @covers \Respect\Validation\Rules\Mimetype
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Danilo Correa <danilosilva87@gmail.com>
  * @author Gabriel Caruso <carusogabriel34@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
@@ -47,7 +43,6 @@ final class MimetypeTest extends RuleTestCase
         $fileInfoMock = $this
             ->getMockBuilder(finfo::class)
             ->disableOriginalConstructor()
-            ->setMethods(['file'])
             ->getMock();
 
         $fileInfoMock
@@ -64,7 +59,7 @@ final class MimetypeTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         return [
             'image/png' => [new Mimetype('image/png'), 'tests/fixtures/valid-image.png'],
@@ -79,7 +74,7 @@ final class MimetypeTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         return [
             'invalid file' => [new Mimetype('image/png'), 'tests/fixtures/invalid-image.png'],

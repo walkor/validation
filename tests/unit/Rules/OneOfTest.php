@@ -1,18 +1,17 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
 
 namespace Respect\Validation\Rules;
 
+use Respect\Validation\Exceptions\CallbackException;
+use Respect\Validation\Exceptions\OneOfException;
+use Respect\Validation\Exceptions\XdigitException;
 use Respect\Validation\Test\TestCase;
 
 /**
@@ -49,8 +48,6 @@ final class OneOfTest extends TestCase
     }
 
     /**
-     * @expectedException \Respect\Validation\Exceptions\OneOfException
-     *
      * @test
      */
     public function emptyChain(): void
@@ -58,12 +55,13 @@ final class OneOfTest extends TestCase
         $rule = new OneOf();
 
         self::assertFalse($rule->validate('any'));
+
+        $this->expectException(OneOfException::class);
+
         $rule->check('any');
     }
 
     /**
-     * @expectedException \Respect\Validation\Exceptions\OneOfException
-     *
      * @test
      */
     public function invalid(): void
@@ -79,12 +77,12 @@ final class OneOfTest extends TestCase
         });
         $rule = new OneOf($valid1, $valid2, $valid3);
         self::assertFalse($rule->validate('any'));
+
+        $this->expectException(OneOfException::class);
         $rule->assert('any');
     }
 
     /**
-     * @expectedException \Respect\Validation\Exceptions\OneOfException
-     *
      * @test
      */
     public function invalidMultipleAssert(): void
@@ -101,12 +99,11 @@ final class OneOfTest extends TestCase
         $rule = new OneOf($valid1, $valid2, $valid3);
         self::assertFalse($rule->validate('any'));
 
+        $this->expectException(OneOfException::class);
         $rule->assert('any');
     }
 
     /**
-     * @expectedException \Respect\Validation\Exceptions\CallbackException
-     *
      * @test
      */
     public function invalidMultipleCheck(): void
@@ -124,12 +121,11 @@ final class OneOfTest extends TestCase
         $rule = new OneOf($valid1, $valid2, $valid3);
         self::assertFalse($rule->validate('any'));
 
+        $this->expectException(CallbackException::class);
         $rule->check('any');
     }
 
     /**
-     * @expectedException \Respect\Validation\Exceptions\OneOfException
-     *
      * @test
      */
     public function invalidMultipleCheckAllValid(): void
@@ -147,12 +143,11 @@ final class OneOfTest extends TestCase
         $rule = new OneOf($valid1, $valid2, $valid3);
         self::assertFalse($rule->validate('any'));
 
+        $this->expectException(OneOfException::class);
         $rule->check('any');
     }
 
     /**
-     * @expectedException \Respect\Validation\Exceptions\XdigitException
-     *
      * @test
      */
     public function invalidCheck(): void
@@ -160,6 +155,7 @@ final class OneOfTest extends TestCase
         $rule = new OneOf(new Xdigit(), new Alnum());
         self::assertFalse($rule->validate(-10));
 
+        $this->expectException(XdigitException::class);
         $rule->check(-10);
     }
 }

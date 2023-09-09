@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -34,21 +30,21 @@ final class FileTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         $sut = new File();
 
         return [
             'filename' => [$sut, __FILE__],
-            'SplFileInfo' => [$sut, new SplFileInfo($this->getFixtureDirectory() . '/valid-image.png')],
-            'SplFileObject' => [$sut, new SplFileObject($this->getFixtureDirectory() . '/invalid-image.png')],
+            'SplFileInfo' => [$sut, new SplFileInfo(self::fixture('valid-image.png'))],
+            'SplFileObject' => [$sut, new SplFileObject(self::fixture('invalid-image.png'))],
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         $sut = new File();
 

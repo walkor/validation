@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -28,9 +24,23 @@ use Respect\Validation\Test\TestCase;
 final class AlwaysValidTest extends TestCase
 {
     /**
+     * @test
+     *
+     * @dataProvider providerForValidInput
+     *
+     * @param mixed $input
+     */
+    public function itAlwaysBeValid($input): void
+    {
+        $rule = new AlwaysValid();
+
+        self::assertTrue($rule->validate($input));
+    }
+
+    /**
      * @return mixed[][]
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         return [
             [0],
@@ -43,19 +53,5 @@ final class AlwaysValidTest extends TestCase
             [[]],
             [['array_full']],
         ];
-    }
-
-    /**
-     * @test
-     *
-     * @dataProvider providerForValidInput
-     *
-     * @param mixed $input
-     */
-    public function itAlwaysBeValid($input): void
-    {
-        $rule = new AlwaysValid();
-
-        self::assertTrue($rule->validate($input));
     }
 }

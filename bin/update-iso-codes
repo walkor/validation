@@ -6,13 +6,16 @@ set -euo pipefail
 
 declare -r IFS=$'\n'
 declare -r REPOSITORY_URL="https://salsa.debian.org/iso-codes-team/iso-codes.git"
-declare -r REPOSITORY_DIRECTORY=$(mktemp --directory)
-declare -r LIBRARY_DIRECTORY="${1}"
+declare -r REPOSITORY_DIRECTORY=".iso-codes-cache"
+declare -r LIBRARY_DIRECTORY="library"
 
 clone_repository()
 {
   echo "Cloning repository ${REPOSITORY_URL}"
-  git clone --quiet "${REPOSITORY_URL}" "${REPOSITORY_DIRECTORY}"
+  if ! test -d "$REPOSITORY_DIRECTORY"
+  then
+    git clone --quiet "${REPOSITORY_URL}" "${REPOSITORY_DIRECTORY}"
+  fi
 }
 
 list_iso_3166()
@@ -41,58 +44,59 @@ update_country_codes()
 
   echo "Updating country codes using ISO 3166-1 and ISO 3166-3"
   {
-    sed -n '/^</,/    protected/p' "${country_rule_filename}"
+    sed -n '/^</,/    \/\/ begin of auto-generated code/p' "${country_rule_filename}"
     {
       list_iso_3166 $[iso_3166_1_count - 1] ${iso_3166_1_filename}
       list_iso_3166 $[iso_3166_3_count - 1] ${iso_3166_3_filename}
     } | sort
-    sed -n '/^    ]/,/^}/p' "${country_rule_filename}"
+    sed -n '/^    \/\/ end of auto-generated code/,/^}/p' "${country_rule_filename}"
   } > "${temporary_filename}"
   mv "${temporary_filename}" "${country_rule_filename}"
 }
 
-rule_from_country_code()
-{
-  local country_code=${1,,}
-
-  echo "${LIBRARY_DIRECTORY}/Rules/SubdivisionCode/${country_code^}SubdivisionCode.php"
-}
 
 update_subdivision_codes()
 {
+  local -r iso_3166_1_filename="${REPOSITORY_DIRECTORY}/data/iso_3166-1.json"
+  local -r iso_3166_1_count=$(grep "\"alpha_3\"" "${iso_3166_1_filename}" | wc --lines)
   local -r iso_3166_2_filename="${REPOSITORY_DIRECTORY}/data/iso_3166-2.json"
-  local -r iso_3166_2_count=$(grep --word-regexp "code" "${iso_3166_2_filename}" | wc --lines)
+  local -r iso_3166_2_count=$(grep --word-regexp "\"code\"" "${iso_3166_2_filename}" | wc --lines)
   local -r temporary_filename=$(mktemp)
   local last_country_code=""
   local last_country_rule=""
 
+  rm -rf data/iso_3166-2/*
+
   echo "Updating subdivision codes using ISO 3166-2"
 
-  for index in $(seq 0 $[iso_3166_2_count - 1]); do
-    local json=$(jq ".[][${index}]" < "${iso_3166_2_filename}")
-    local code=$(jq -r ".code" <<< "${json}")
-    local name=$(jq -r ".name" <<< "${json}")
+  for index in $(seq 0 $[iso_3166_1_count - 1]); do
+    local json=$(jq ".[][${index}]" < "${iso_3166_1_filename}")
+    local alpha_1="$(jq ".alpha_2" <<< "${json}" | tr -d '"')"
+    echo "$alpha_1" "$(jq ".name" <<< "${json}" | tr -d '"')"
+  done | while read -r country_line
+  do
+    local alpha_1="${country_line%% *}"
+    local cname="${country_line#$alpha_1 }"
+    local json="$(jq '."3166-2"[]  | select(.code|test("^'"$alpha_1"'"))' < "${iso_3166_2_filename}")"
 
-    local current_country_code=$(cut --delimiter "-" --fields 1 <<< "${code}")
-    local current_country_rule=$(rule_from_country_code ${current_country_code})
+    echo "<?php
+return [
+  \"country\" => \"$cname\",
+  \"subdivisions\" => [" > "data/iso_3166-2/${alpha_1}.php"
 
-    if [[ ${last_country_code} != ${current_country_code} ]] && [[ ! -z "${last_country_code}" ]]; then
-      sed -n '/^    \]/,/^}/p' "${last_country_rule}" >> "${temporary_filename}"
-      cat "${temporary_filename}" > "${last_country_rule}"
-    fi
+    jq -r "[.code, .name] | @tsv" <<< "${json}" | while read -r subdiv_line
+    do
+      local alpha_2="${subdiv_line%%	*}"
+      local name="${subdiv_line#$alpha_2	}"
+      echo "    \"${alpha_2#${alpha_1}-}\" => \"$name\","
+    done | sed '$ s/.$//' >> "data/iso_3166-2/${alpha_1}.php"
 
-    if [[ ${last_country_code} != ${current_country_code} ]]; then
-      echo "- Updating ${current_country_code}"
-      sed -n '/^</,/public \$haystack = \[/p' "${current_country_rule}" > "${temporary_filename}"
-    fi
-
-    echo "        '$(cut --delimiter "-" --fields 2 <<<  ${code})', // ${name}" >> "${temporary_filename}"
-
-    last_country_code=${current_country_code}
-    last_country_rule=${current_country_rule}
+    echo "  ]
+];" >> "data/iso_3166-2/${alpha_1}.php"
   done
 }
 
 clone_repository
 update_country_codes
 update_subdivision_codes
+

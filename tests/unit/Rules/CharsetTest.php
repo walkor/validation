@@ -1,18 +1,15 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
 
 namespace Respect\Validation\Rules;
 
+use Respect\Validation\Exceptions\ComponentException;
 use Respect\Validation\Test\RuleTestCase;
 
 use function mb_convert_encoding;
@@ -22,7 +19,7 @@ use function mb_convert_encoding;
  *
  * @covers \Respect\Validation\Rules\Charset
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Gabriel Caruso <carusogabriel34@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  * @author William Espindola <oi@williamespindola.com.br>
@@ -31,19 +28,19 @@ final class CharsetTest extends RuleTestCase
 {
     /**
      * @test
-     *
-     * @expectedException \Respect\Validation\Exceptions\ComponentException
-     * @expectedExceptionMessage Invalid charset
      */
     public function itShouldThrowsExceptionWhenCharsetIsNotValid(): void
     {
+        $this->expectException(ComponentException::class);
+        $this->expectExceptionMessage('Invalid charset');
+
         new Charset('UTF-8', 'UTF-9');
     }
 
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         return [
             [new Charset('UTF-8'), ''],
@@ -60,7 +57,7 @@ final class CharsetTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         $rule = new Charset('ASCII');
 

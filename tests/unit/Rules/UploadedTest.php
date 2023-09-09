@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -15,6 +11,7 @@ namespace Respect\Validation\Rules;
 
 use PHPUnit\Framework\SkippedTestError;
 use Respect\Validation\Test\RuleTestCase;
+use Respect\Validation\Test\Stubs\UploadedFileStub;
 use SplFileInfo;
 use stdClass;
 
@@ -37,6 +34,36 @@ final class UploadedTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
+    public static function providerForValidInput(): array
+    {
+        $rule = new Uploaded();
+
+        return [
+            [$rule, self::UPLOADED_FILENAME],
+            [$rule, new SplFileInfo(self::UPLOADED_FILENAME)],
+            [$rule, UploadedFileStub::create()],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function providerForInvalidInput(): array
+    {
+        $rule = new Uploaded();
+
+        return [
+            [$rule, 'not-uploaded.ext'],
+            [$rule, new SplFileInfo('not-uploaded.ext')],
+            [$rule, []],
+            [$rule, 1],
+            [$rule, new stdClass()],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp(): void
     {
         if (!extension_loaded('uopz')) {
@@ -50,34 +77,5 @@ final class UploadedTest extends RuleTestCase
             },
             true
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function providerForValidInput(): array
-    {
-        $rule = new Uploaded();
-
-        return [
-            [$rule, self::UPLOADED_FILENAME],
-            [$rule, new SplFileInfo(self::UPLOADED_FILENAME)],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function providerForInvalidInput(): array
-    {
-        $rule = new Uploaded();
-
-        return [
-            [$rule, 'not-uploaded.ext'],
-            [$rule, new SplFileInfo('not-uploaded.ext')],
-            [$rule, []],
-            [$rule, 1],
-            [$rule, new stdClass()],
-        ];
     }
 }

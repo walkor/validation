@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -15,6 +11,8 @@ namespace Respect\Validation\Rules;
 
 use Respect\Validation\Test\RuleTestCase;
 use stdClass;
+
+use function extension_loaded;
 
 /**
  * @group rule
@@ -28,7 +26,7 @@ final class IbanTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         $sut = new Iban();
 
@@ -50,7 +48,7 @@ final class IbanTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         $sut = new Iban();
 
@@ -67,5 +65,17 @@ final class IbanTest extends RuleTestCase
             'HungaryWrong' => [$sut, 'HU42 5000 5880 7742'],
             'GermanydWrong' => [$sut, 'DE89 5000 5880 7742'],
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function setUp(): void
+    {
+        if (extension_loaded('bcmath')) {
+            return;
+        }
+
+        $this->markTestSkipped('You need bcmath to execute this test');
     }
 }

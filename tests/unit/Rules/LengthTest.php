@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -25,7 +21,7 @@ use function tmpfile;
  *
  * @covers \Respect\Validation\Rules\Length
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Augusto Pascutti <contato@augustopascutti.com>
  * @author Danilo Correa <danilosilva87@gmail.com>
  * @author Gabriel Caruso <carusogabriel34@gmail.com>
@@ -35,9 +31,20 @@ use function tmpfile;
 final class LengthTest extends RuleTestCase
 {
     /**
+     * @test
+     */
+    public function isShouldNotNotAcceptInvalidLengths(): void
+    {
+        $this->expectException(ComponentException::class);
+        $this->expectExceptionMessage('10 cannot be less than 1 for validation');
+
+        new Length(10, 1);
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         return [
             [new Length(1, 15), 'alganet'],
@@ -60,7 +67,7 @@ final class LengthTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         return [
             [new Length(1, 15), ''],
@@ -75,16 +82,5 @@ final class LengthTest extends RuleTestCase
             [new Length(1, 4), new CountableStub(5)],
             [new Length(1, 4), 12345],
         ];
-    }
-
-    /**
-     * @test
-     */
-    public function isShouldNotNotAcceptInvalidLengths(): void
-    {
-        $this->expectException(ComponentException::class);
-        $this->expectExceptionMessage('10 cannot be less than 1 for validation');
-
-        new Length(10, 1);
     }
 }

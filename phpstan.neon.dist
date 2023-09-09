@@ -2,26 +2,30 @@ includes:
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon
-
 parameters:
   fileExtensions:
     - php
     - phpt
-  checkGenericClassInNonGenericObjectType: false
-  checkMissingIterableValueType: false
   ignoreErrors:
     -
+      # Why: Properties are read dynamically during message construction
+      message: '/Property Respect\\Validation\\Rules\\[a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]+ is never read, only written\./'
+
+    -
+      # Why: SimpleXMLElement is weird and doesn't implement anything ArrayAccess-like
       message: '/Instanceof between mixed and SimpleXMLElement will always evaluate to false\./'
       path: library/Rules/ArrayVal.php
+
     -
-      message: '/Parameter #1 \$error_handler of function set_error_handler expects \(callable\(int, string, string, int, array\): bool\)\|null, Closure\(\): void given\./'
-      paths:
-        - library/Rules/Call.php
-        - tests/unit/Rules/CallTest.php
-    -
+      # Why: This error is intentional, so PHPunit can test an invalid __callStatic call
       message: '/Call to an undefined static method Respect\\Validation\\Validator::iDoNotExistSoIShouldThrowException/'
       path: tests/unit/ValidatorTest.php
-  level: 7
+
+    -
+      # Why: StaticValidator is a stub interface that types __callStatic
+      message: '/Call to static method PHPUnit\\Framework\\Assert::assertSame\(\) with Respect\\Validation\\Validator and Respect\\Validation\\ChainedValidator will always evaluate to false./'
+      path: tests/unit/ValidatorTest.php
+  level: 8
   paths:
     - library/
     - tests/

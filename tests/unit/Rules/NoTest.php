@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -34,79 +30,6 @@ final class NoTest extends RuleTestCase
      * @var string
      */
     private $locale;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp(): void
-    {
-        $this->locale = (string) setlocale(LC_ALL, '0');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown(): void
-    {
-        setlocale(LC_ALL, $this->locale);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function providerForValidInput(): array
-    {
-        $sut = new No();
-
-        return [
-            [$sut, 'N'],
-            [$sut, 'Nay'],
-            [$sut, 'Nix'],
-            [$sut, 'No'],
-            [$sut, 'Nope'],
-            [$sut, 'Not'],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function providerForInvalidInput(): array
-    {
-        $sut = new No();
-
-        return [
-            [$sut, 'Donnot'],
-            [$sut, 'Never'],
-            [$sut, 'Niet'],
-            [$sut, 'Noooooooo'],
-            [$sut, 'Não'],
-        ];
-    }
-
-    /**
-     * @return string[][]
-     */
-    public function providerForValidInputWithLocale(): array
-    {
-        return [
-            'nl' => ['nl_NL.UTF-8', 'Nee'],
-            'pt' => ['pt_BR.UTF-8', 'Não'],
-            'ru' => ['ru_RU.UTF-8', 'нет'],
-        ];
-    }
-
-    /**
-     * @return string[][]
-     */
-    public function providerForInvalidInputWithLocale(): array
-    {
-        return [
-            'nl' => ['nl_NL.UTF-8', 'Ez'],
-            'pt' => ['pt_BR.UTF-8', 'нет'],
-            'ru' => ['pt_BR.UTF-8', 'Οχι'],
-        ];
-    }
 
     /**
      * @test
@@ -138,5 +61,78 @@ final class NoTest extends RuleTestCase
         }
 
         self::assertInvalidInput(new No(true), $input);
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function providerForValidInputWithLocale(): array
+    {
+        return [
+            'nl' => ['nl_NL.UTF-8', 'Nee'],
+            'pt' => ['pt_BR.UTF-8', 'Não'],
+            'ru' => ['ru_RU.UTF-8', 'нет'],
+        ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function providerForInvalidInputWithLocale(): array
+    {
+        return [
+            'nl' => ['nl_NL.UTF-8', 'Ez'],
+            'pt' => ['pt_BR.UTF-8', 'нет'],
+            'ru' => ['pt_BR.UTF-8', 'Οχι'],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function providerForValidInput(): array
+    {
+        $sut = new No();
+
+        return [
+            [$sut, 'N'],
+            [$sut, 'Nay'],
+            [$sut, 'Nix'],
+            [$sut, 'No'],
+            [$sut, 'Nope'],
+            [$sut, 'Not'],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function providerForInvalidInput(): array
+    {
+        $sut = new No();
+
+        return [
+            [$sut, 'Donnot'],
+            [$sut, 'Never'],
+            [$sut, 'Niet'],
+            [$sut, 'Noooooooo'],
+            [$sut, 'Não'],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function setUp(): void
+    {
+        $this->locale = (string) setlocale(LC_ALL, '0');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function tearDown(): void
+    {
+        setlocale(LC_ALL, $this->locale);
     }
 }

@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -35,7 +31,7 @@ use const FILTER_VALIDATE_IP;
  *
  * This validator uses the native filter_var() PHP function.
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Danilo Benevides <danilobenevides01@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  * @author Luís Otávio Cobucci Oblonczyk <lcobucci@gmail.com>
@@ -105,7 +101,7 @@ final class Ip extends AbstractRule
 
     private function createRange(): ?string
     {
-        if ($this->endAddress && $this->endAddress) {
+        if ($this->startAddress && $this->endAddress) {
             return $this->startAddress . '-' . $this->endAddress;
         }
 
@@ -181,7 +177,7 @@ final class Ip extends AbstractRule
             throw new ComponentException('Invalid network mask');
         }
 
-        $this->mask = sprintf('%032b', ip2long(long2ip(~(2 ** (32 - (int) $parts[1]) - 1))));
+        $this->mask = sprintf('%032b', ip2long((string) long2ip(~(2 ** (32 - (int) $parts[1]) - 1))));
     }
 
     private function verifyAddress(string $address): bool

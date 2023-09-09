@@ -1,18 +1,15 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
 
 namespace Respect\Validation\Rules;
 
+use Respect\Validation\Exceptions\ComponentException;
 use Respect\Validation\Test\RuleTestCase;
 
 /**
@@ -29,19 +26,21 @@ final class CountryCodeTest extends RuleTestCase
 {
     /**
      * @test
-     *
-     * @expectedException \Respect\Validation\Exceptions\ComponentException
-     * @expectedExceptionMessage "whatever" is not a valid set for ISO 3166-1 (Available: alpha-2, alpha-3, numeric)
      */
     public function itShouldThrowsExceptionWhenInvalidFormat(): void
     {
+        $this->expectException(ComponentException::class);
+        $this->expectExceptionMessage(
+            '"whatever" is not a valid set for ISO 3166-1 (Available: alpha-2, alpha-3, numeric)'
+        );
+
         new CountryCode('whatever');
     }
 
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         return [
             [new CountryCode(CountryCode::ALPHA2),  'BR'],
@@ -59,7 +58,7 @@ final class CountryCodeTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         return [
             [new CountryCode(CountryCode::ALPHA2),  'USA'],

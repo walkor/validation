@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -14,8 +10,7 @@ declare(strict_types=1);
 namespace Respect\Validation\Rules;
 
 use Respect\Validation\Test\RuleTestCase;
-use Respect\Validation\Validatable;
-use stdClass;
+use Respect\Validation\Test\Stubs\WithProperties;
 
 /**
  * @group rule
@@ -23,7 +18,7 @@ use stdClass;
  * @covers \Respect\Validation\Rules\AbstractRelated
  * @covers \Respect\Validation\Rules\Attribute
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Emmerson Siqueira <emmersonsiqueira@gmail.com>
  * @author Gabriel Caruso <carusogabriel34@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
@@ -40,26 +35,25 @@ final class AttributeTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
-        $obj = new stdClass();
-        $obj->bar = 'foo';
-
-        $extraValidator = $this->createMock(Validatable::class);
-        $extraValidator->method('validate')
-            ->willReturn(true);
-
         return [
-            'attribute is present without extra validator' => [new Attribute('bar'), $obj],
+            'attribute is present without extra validator' => [new Attribute('public'), new WithProperties()],
             'private attribute is present without extra validator' => [
-                new Attribute('bar'),
-                $this,
+                new Attribute('private'),
+                new WithProperties(),
             ],
-            'attribute is present with extra validator' => [new Attribute('bar', $extraValidator), $obj],
-            'non mandatory attribute is not present' => [new Attribute('foo', null, false), $obj],
+            'attribute is present with extra validator' => [
+                new Attribute('public', new AlwaysValid()),
+                new WithProperties(),
+            ],
+            'non mandatory attribute is not present' => [
+                new Attribute('nonexistent', null, false),
+                new WithProperties(),
+            ],
             'non mandatory attribute is not present with extra validator' => [
-                new Attribute('foo', $extraValidator, false),
-                $obj,
+                new Attribute('nonexistent', new AlwaysValid(), false),
+                new WithProperties(),
             ],
         ];
     }
@@ -67,22 +61,19 @@ final class AttributeTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
-        $obj = new stdClass();
-        $obj->bar = 'foo';
-
-        $extraValidatorMock = $this->createMock(Validatable::class);
-        $extraValidatorMock->method('validate')->willReturn(false);
-
         return [
-            'attribute is absent without extra validator' => [new Attribute('barr'), $obj],
+            'attribute is absent without extra validator' => [new Attribute('barr'), new WithProperties()],
             'private attribute is not valid based on extra validator' => [
-                new Attribute('bar', $extraValidatorMock),
-                $this,
+                new Attribute('private', new AlwaysInvalid()),
+                new WithProperties(),
             ],
             'value provided is an empty string' => [new Attribute('barr'), ''],
-            'validator related to attribute does not validate' => [new Attribute('bar', $extraValidatorMock), $obj],
+            'validator related to attribute does not validate' => [
+                new Attribute('public', new AlwaysInvalid()),
+                new WithProperties(),
+            ],
         ];
     }
 }

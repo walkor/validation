@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -27,33 +23,6 @@ use stdClass;
  */
 final class NullableTest extends TestCase
 {
-    /**
-     * Data provider for not nullable values.
-     *
-     * @return mixed[][]
-     */
-    public function providerForNotNullable(): array
-    {
-        return [
-            [''],
-            [1],
-            [[]],
-            [' '],
-            [0],
-            ['0'],
-            [0],
-            ['0.0'],
-            [false],
-            [['']],
-            [[' ']],
-            [[0]],
-            [['0']],
-            [[false]],
-            [[[''], [0]]],
-            [new stdClass()],
-        ];
-    }
-
     /**
      * @test
      */
@@ -156,5 +125,32 @@ final class NullableTest extends TestCase
 
         $rule = new Nullable($validatable);
         $rule->check($input);
+    }
+
+    /**
+     * Data provider for not nullable values.
+     *
+     * @return mixed[][]
+     */
+    public static function providerForNotNullable(): array
+    {
+        return [
+            [''],
+            [1],
+            [[]],
+            [' '],
+            [0],
+            ['0'],
+            [0],
+            ['0.0'],
+            [false],
+            [['']],
+            [[' ']],
+            [[0]],
+            [['0']],
+            [[false]],
+            [[[''], [0]]],
+            [new stdClass()],
+        ];
     }
 }

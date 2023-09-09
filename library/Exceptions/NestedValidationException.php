@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -35,7 +31,7 @@ use const PHP_EOL;
  * to handle them and to retrieve nested messages based on itself and its
  * children.
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  * @author Jonathan Stewmon <jstewmon@rmn.com>
  * @author Wojciech Frącz <fraczwojciech@gmail.com>
@@ -81,8 +77,12 @@ class NestedValidationException extends ValidationException implements IteratorA
         return $this;
     }
 
+    /**
+     * @return SplObjectStorage<ValidationException, int>
+     */
     public function getIterator(): SplObjectStorage
     {
+        /** @var SplObjectStorage<ValidationException, int> */
         $childrenExceptions = new SplObjectStorage();
         $recursiveIteratorIterator = $this->getRecursiveIterator();
 
@@ -183,6 +183,45 @@ class NestedValidationException extends ValidationException implements IteratorA
         return implode(PHP_EOL, $messages);
     }
 
+    /**
+     * @param string[] $templates
+     */
+    protected function renderMessage(ValidationException $exception, array $templates): string
+    {
+        if (isset($templates[$exception->getId()])) {
+            $exception->updateTemplate($templates[$exception->getId()]);
+        }
+
+        return $exception->getMessage();
+    }
+
+    /**
+     * @param string[] $templates
+     * @param mixed ...$ids
+     *
+     * @return string[]
+     */
+    protected function findTemplates(array $templates, ...$ids): array
+    {
+        while (count($ids) > 0) {
+            $id = array_shift($ids);
+            if (!isset($templates[$id])) {
+                continue;
+            }
+
+            if (!is_array($templates[$id])) {
+                continue;
+            }
+
+            $templates = $templates[$id];
+        }
+
+        return $templates;
+    }
+
+    /**
+     * @return RecursiveIteratorIterator<RecursiveExceptionIterator>
+     */
     private function getRecursiveIterator(): RecursiveIteratorIterator
     {
         return new RecursiveIteratorIterator(
@@ -212,41 +251,5 @@ class NestedValidationException extends ValidationException implements IteratorA
         }
 
         return !$childException instanceof NonOmissibleException;
-    }
-
-    /**
-     * @param string[] $templates
-     */
-    private function renderMessage(ValidationException $exception, array $templates): string
-    {
-        if (isset($templates[$exception->getId()])) {
-            $exception->updateTemplate($templates[$exception->getId()]);
-        }
-
-        return $exception->getMessage();
-    }
-
-    /**
-     * @param string[] $templates
-     * @param mixed ...$ids
-     *
-     * @return string[]
-     */
-    private function findTemplates(array $templates, ...$ids): array
-    {
-        while (count($ids) > 0) {
-            $id = array_shift($ids);
-            if (!isset($templates[$id])) {
-                continue;
-            }
-
-            if (!is_array($templates[$id])) {
-                continue;
-            }
-
-            $templates = $templates[$id];
-        }
-
-        return $templates;
     }
 }

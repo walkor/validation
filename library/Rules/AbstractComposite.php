@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -23,7 +19,7 @@ use function array_map;
 /**
  * Abstract class for rules that are composed by other rules.
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  * @author Wojciech Frącz <fraczwojciech@gmail.com>
  */
@@ -60,6 +56,18 @@ abstract class AbstractComposite extends AbstractRule
         return parent::setName($name);
     }
 
+    public function setDefault(string $default, bool $defaultType=false): Validatable
+    {
+        $parentDefault = $this->getDefault();
+        foreach ($this->rules as $rule) {
+            $ruleDefault = $rule->getDefault();
+            if ($ruleDefault && $parentDefault !== $ruleDefault) {
+                continue;
+            }
+            $rule->setDefault($default, $defaultType);
+        }
+        return parent::setDefault($default, $defaultType);
+    }
     /**
      * Append a rule into the stack of rules.
      *

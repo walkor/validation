@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -21,15 +17,27 @@ use stdClass;
  *
  * @covers \Respect\Validation\Rules\Equals
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  */
 final class EqualsTest extends RuleTestCase
 {
     /**
+     * @test
+     */
+    public function shouldPassCompareToParameterToException(): void
+    {
+        $compareTo = new stdClass();
+        $equals = new Equals($compareTo);
+        $exception = $equals->reportError('input');
+
+        self::assertSame($compareTo, $exception->getParam('compareTo'));
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         return [
             [new Equals('foo'), 'foo'],
@@ -43,23 +51,11 @@ final class EqualsTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         return [
             [new Equals('foo'), ''],
             [new Equals('foo'), 'bar'],
         ];
-    }
-
-    /**
-     * @test
-     */
-    public function shouldPassCompareToParameterToException(): void
-    {
-        $compareTo = new stdClass();
-        $equals = new Equals($compareTo);
-        $exception = $equals->reportError('input');
-
-        self::assertSame($compareTo, $exception->getParam('compareTo'));
     }
 }

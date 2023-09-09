@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -18,6 +14,7 @@ use Respect\Validation\Exceptions\InvalidClassException;
 use Respect\Validation\Exceptions\ValidationException;
 use Respect\Validation\Test\Exceptions\StubException;
 use Respect\Validation\Test\Rules\AbstractClass;
+use Respect\Validation\Test\Rules\CustomRule;
 use Respect\Validation\Test\Rules\Invalid;
 use Respect\Validation\Test\Rules\Stub;
 use Respect\Validation\Test\Rules\Valid;
@@ -226,5 +223,27 @@ final class FactoryTest extends TestCase
         self::assertSame($factory, Factory::getDefaultInstance());
 
         Factory::setDefaultInstance($defaultInstance);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAutoResolveExceptionIfNamespacePatternMatchesAndExceptionClassFound(): void
+    {
+        $this->expectException(StubException::class);
+
+        $rule = new Stub();
+        $rule->assert('test');
+    }
+
+    /**
+     * @test
+     */
+    public function shouldUseDefaultExceptionIfCustomExceptionNotFound(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        $rule = new CustomRule();
+        $rule->assert('test');
     }
 }

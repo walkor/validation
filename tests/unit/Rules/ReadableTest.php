@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -14,6 +10,7 @@ declare(strict_types=1);
 namespace Respect\Validation\Rules;
 
 use Respect\Validation\Test\RuleTestCase;
+use Respect\Validation\Test\Stubs\StreamStub;
 use SplFileInfo;
 use stdClass;
 
@@ -30,29 +27,31 @@ final class ReadableTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
-        $file = $this->getFixtureDirectory() . '/valid-image.gif';
+        $file = self::fixture('valid-image.gif');
         $rule = new Readable();
 
         return [
             [$rule, $file],
             [$rule, new SplFileInfo($file)],
+            [$rule, StreamStub::create()],
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
-        $file = $this->getFixtureDirectory() . '/invalid-image.gif';
+        $file = self::fixture('invalid-image.gif');
         $rule = new Readable();
 
         return [
             [$rule, $file],
             [$rule, new SplFileInfo($file)],
             [$rule, new stdClass()],
+            [$rule, StreamStub::createUnreadable()],
         ];
     }
 }

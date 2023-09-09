@@ -237,15 +237,6 @@ is the same as the input. You can customize a validator name using:
 v::dateTime('Y-m-d')->between('1980-02-02', 'now')->setName('Member Since');
 ```
 
-## Zend/Symfony validators
-
-It is also possible to reuse validators from other frameworks if they are installed:
-
-```php
-$hostnameValidator = v::zend('Hostname')->assert('google.com');
-$timeValidator     = v::sf('Time')->assert('22:00:01');
-```
-
 ## Validation methods
 
 We've seen `validate()` that returns true or false and `assert()` that throws a complete

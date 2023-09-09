@@ -116,7 +116,6 @@
 ## Integrations
 
 - [Sf](rules/Sf.md)
-- [Zend](rules/Zend.md)
 
 ## Internet
 
@@ -175,6 +174,7 @@
 ## Numbers
 
 - [Base](rules/Base.md)
+- [Decimal](rules/Decimal.md)
 - [Digit](rules/Digit.md)
 - [Even](rules/Even.md)
 - [Factor](rules/Factor.md)
@@ -301,6 +301,7 @@
 - [CurrencyCode](rules/CurrencyCode.md)
 - [Date](rules/Date.md)
 - [DateTime](rules/DateTime.md)
+- [Decimal](rules/Decimal.md)
 - [Digit](rules/Digit.md)
 - [Directory](rules/Directory.md)
 - [Domain](rules/Domain.md)
@@ -418,4 +419,3 @@
 - [Writable](rules/Writable.md)
 - [Xdigit](rules/Xdigit.md)
 - [Yes](rules/Yes.md)
-- [Zend](rules/Zend.md)

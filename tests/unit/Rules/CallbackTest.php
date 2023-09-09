@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -21,7 +17,7 @@ use stdClass;
  *
  * @covers \Respect\Validation\Rules\Callback
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Gabriel Caruso <carusogabriel34@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  * @author Nick Lombard <github@jigsoft.co.za>
@@ -32,11 +28,11 @@ final class CallbackTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         return [
             [new Callback('is_a', 'stdClass'), new stdClass()],
-            [new Callback([$this, 'sampleCallbackUsedInsideThisTest']), 'test'],
+            [new Callback([new AlwaysValid(), 'validate']), 'test'],
             [new Callback('is_string'), 'test'],
             [
                 new Callback(static function () {
@@ -47,15 +43,10 @@ final class CallbackTest extends RuleTestCase
         ];
     }
 
-    public function sampleCallbackUsedInsideThisTest(): bool
-    {
-        return true;
-    }
-
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         return [
             [

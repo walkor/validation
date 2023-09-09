@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -21,7 +17,7 @@ use function key;
 /**
  * Default exception class for rule validations.
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  */
 class ValidationException extends InvalidArgumentException implements Exception
@@ -110,6 +106,11 @@ class ValidationException extends InvalidArgumentException implements Exception
         return $this->params[$name] ?? null;
     }
 
+    public function setParam(string $name, mixed $value): void
+    {
+        $this->params[$name] = $value;
+    }
+
     public function updateMode(string $mode): void
     {
         $this->mode = $mode;
@@ -136,11 +137,6 @@ class ValidationException extends InvalidArgumentException implements Exception
         return isset($this->defaultTemplates[$this->mode][$this->template]) === false;
     }
 
-    public function __toString(): string
-    {
-        return $this->getMessage();
-    }
-
     protected function chooseTemplate(): string
     {
         return (string) key($this->defaultTemplates[$this->mode]);
@@ -153,5 +149,10 @@ class ValidationException extends InvalidArgumentException implements Exception
             $this->input,
             $this->params
         );
+    }
+
+    public function __toString(): string
+    {
+        return $this->getMessage();
     }
 }

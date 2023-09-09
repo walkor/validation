@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -20,7 +16,7 @@ use function sqrt;
 /**
  * Validates whether the input is a prime number.
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Camilo Teixeira de Melo <kmilotxm@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  * @author Ismael Elias <ismael.esq@hotmail.com>
@@ -42,7 +38,7 @@ final class PrimeNumber extends AbstractRule
         }
 
         for ($i = 3; $i <= ceil(sqrt((float) $input)); $i += 2) {
-            if (($input % $i) == 0) {
+            if ($input % $i == 0) {
                 return false;
             }
         }

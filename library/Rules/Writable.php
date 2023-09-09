@@ -1,18 +1,15 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
 
 namespace Respect\Validation\Rules;
 
+use Psr\Http\Message\StreamInterface;
 use SplFileInfo;
 
 use function is_string;
@@ -32,6 +29,10 @@ final class Writable extends AbstractRule
     public function validate($input): bool
     {
         if ($input instanceof SplFileInfo) {
+            return $input->isWritable();
+        }
+
+        if ($input instanceof StreamInterface) {
             return $input->isWritable();
         }
 

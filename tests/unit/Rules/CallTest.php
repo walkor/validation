@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -29,7 +25,7 @@ use function trigger_error;
  *
  * @covers \Respect\Validation\Rules\Call
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Gabriel Caruso <carusogabriel34@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  * @author Nick Lombard <github@jigsoft.co.za>
@@ -40,26 +36,6 @@ final class CallTest extends TestCase
      * @var ErrorException
      */
     private $errorException;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp(): void
-    {
-        $this->errorException = new ErrorException('This is a PHP error');
-
-        set_error_handler(function (): void {
-            throw $this->errorException;
-        });
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown(): void
-    {
-        restore_error_handler();
-    }
 
     /**
      * @test
@@ -311,5 +287,25 @@ final class CallTest extends TestCase
         self::expectExceptionObject($this->errorException);
 
         trigger_error('Forcing PHP to trigger an error');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function setUp(): void
+    {
+        $this->errorException = new ErrorException('This is a PHP error');
+
+        set_error_handler(function (): void {
+            throw $this->errorException;
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function tearDown(): void
+    {
+        restore_error_handler();
     }
 }

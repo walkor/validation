@@ -1,17 +1,15 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
 
 namespace Respect\Validation\Exceptions;
+
+use Respect\Validation\Helpers\CountryInfo;
 
 /**
  * @author Danilo Correa <danilosilva87@gmail.com>
@@ -20,15 +18,38 @@ namespace Respect\Validation\Exceptions;
  */
 final class PhoneException extends ValidationException
 {
+    public const FOR_COUNTRY = 'for_country';
+    public const INTERNATIONAL = 'international';
+
     /**
      * {@inheritDoc}
      */
     protected $defaultTemplates = [
         self::MODE_DEFAULT => [
-            self::STANDARD => '{{name}} 必须是有效的电话号码',
+	    self::INTERNATIONAL => '{{name}} 必须是有效的电话号码',
+            self::FOR_COUNTRY => '{{name}} 必须是 {{countryName}} 的有效电话号码',
         ],
         self::MODE_NEGATIVE => [
-            self::STANDARD => '{{name}} 不能是有效的电话号码',
+	    self::INTERNATIONAL => '{{name}} 不能是有效的电话号码',
+            self::FOR_COUNTRY => '{{name}} 必须是 {{countryName}} 的有效电话号码',
+
         ],
     ];
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function chooseTemplate(): string
+    {
+        $countryCode = $this->getParam('countryCode');
+
+        if (!$countryCode) {
+            return self::INTERNATIONAL;
+        }
+
+        $countryInfo = new CountryInfo($countryCode);
+        $this->setParam('countryName', $countryInfo->getCountry());
+
+        return self::FOR_COUNTRY;
+    }
 }

@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -20,6 +16,7 @@ use function preg_match;
 use function preg_replace_callback;
 use function str_replace;
 use function strlen;
+use function strval;
 use function substr;
 
 /**
@@ -127,7 +124,7 @@ final class Iban extends AbstractRule
         $bban = substr($iban, 4);
         $rearranged = $bban . $countryCode . $checkDigits;
 
-        return bcmod($this->convertToInteger($rearranged), '97') === '1';
+        return bcmod($this->convertToIntegerAsString($rearranged), '97') === '1';
     }
 
     private function hasValidCountryLength(string $iban, string $countryCode): bool
@@ -139,12 +136,12 @@ final class Iban extends AbstractRule
         return strlen($iban) === self::COUNTRIES_LENGTHS[$countryCode];
     }
 
-    private function convertToInteger(string $reArrangedIban): string
+    private function convertToIntegerAsString(string $reArrangedIban): string
     {
         return (string) preg_replace_callback(
             '/[A-Z]/',
-            static function (array $match): int {
-                return ord($match[0]) - 55;
+            static function (array $match): string {
+                return strval(ord($match[0]) - 55);
             },
             $reArrangedIban
         );

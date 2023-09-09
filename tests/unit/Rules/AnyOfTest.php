@@ -1,18 +1,16 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
 
 namespace Respect\Validation\Rules;
 
+use Respect\Validation\Exceptions\AnyOfException;
+use Respect\Validation\Exceptions\XdigitException;
 use Respect\Validation\Test\TestCase;
 
 /**
@@ -20,7 +18,7 @@ use Respect\Validation\Test\TestCase;
  * @covers \Respect\Validation\Exceptions\AnyOfException
  * @covers \Respect\Validation\Rules\AnyOf
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Gabriel Caruso <carusogabriel34@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  */
@@ -47,8 +45,6 @@ final class AnyOfTest extends TestCase
     }
 
     /**
-     * @expectedException \Respect\Validation\Exceptions\AnyOfException
-     *
      * @test
      */
     public function invalid(): void
@@ -64,18 +60,20 @@ final class AnyOfTest extends TestCase
         });
         $o = new AnyOf($valid1, $valid2, $valid3);
         self::assertFalse($o->validate('any'));
+
+        $this->expectException(AnyOfException::class);
         $o->assert('any');
     }
 
     /**
-     * @expectedException \Respect\Validation\Exceptions\XdigitException
-     *
      * @test
      */
     public function invalidCheck(): void
     {
         $o = new AnyOf(new Xdigit(), new Alnum());
         self::assertFalse($o->validate(-10));
+
+        $this->expectException(XdigitException::class);
         $o->check(-10);
     }
 }

@@ -7,36 +7,15 @@ declare(strict_types=1);
 
 require 'vendor/autoload.php';
 
-use Respect\Validation\Exceptions\NestedValidationException;
-use Respect\Validation\Exceptions\ResourceTypeException;
 use Respect\Validation\Validator as v;
 
-try {
-    v::resourceType()->check('test');
-} catch (ResourceTypeException $exception) {
-    echo $exception->getMessage() . PHP_EOL;
-}
-
-try {
-    v::not(v::resourceType())->check(tmpfile());
-} catch (ResourceTypeException $exception) {
-    echo $exception->getMessage() . PHP_EOL;
-}
-
-try {
-    v::resourceType()->assert([]);
-} catch (NestedValidationException $exception) {
-    echo $exception->getFullMessage() . PHP_EOL;
-}
-
-try {
-    v::not(v::resourceType())->assert(xml_parser_create());
-} catch (NestedValidationException $exception) {
-    echo $exception->getFullMessage() . PHP_EOL;
-}
+exceptionMessage(static fn() => v::resourceType()->check('test'));
+exceptionMessage(static fn() => v::not(v::resourceType())->check(tmpfile()));
+exceptionFullMessage(static fn() => v::resourceType()->assert([]));
+exceptionFullMessage(static fn() => v::not(v::resourceType())->assert(tmpfile()));
 ?>
 --EXPECT--
 "test" must be a resource
 `[resource] (stream)` must not be a resource
 - `{ }` must be a resource
-- `[resource] (xml)` must not be a resource
+- `[resource] (stream)` must not be a resource

@@ -1,18 +1,15 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
 
 namespace Respect\Validation\Rules;
 
+use Respect\Validation\Exceptions\ComponentException;
 use Respect\Validation\Test\RuleTestCase;
 
 use const FILTER_FLAG_HOSTNAME;
@@ -38,19 +35,19 @@ final class FilterVarTest extends RuleTestCase
 {
     /**
      * @test
-     *
-     * @expectedException \Respect\Validation\Exceptions\ComponentException
-     * @expectedExceptionMessage Cannot accept the given filter
      */
     public function itShouldThrowsExceptionWhenFilterIsNotValid(): void
     {
+        $this->expectException(ComponentException::class);
+        $this->expectExceptionMessage('Cannot accept the given filter');
+
         new FilterVar(FILTER_SANITIZE_EMAIL);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         return [
             [new FilterVar(FILTER_VALIDATE_INT), '12345'],
@@ -59,13 +56,14 @@ final class FilterVarTest extends RuleTestCase
             [new FilterVar(FILTER_VALIDATE_BOOLEAN), 'On'],
             [new FilterVar(FILTER_VALIDATE_URL, FILTER_FLAG_QUERY_REQUIRED), 'http://example.com?foo=bar'],
             [new FilterVar(FILTER_VALIDATE_DOMAIN), 'example.com'],
+            [new FilterVar(FILTER_VALIDATE_INT), '0'],
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         return [
             [new FilterVar(FILTER_VALIDATE_INT), 1.4],

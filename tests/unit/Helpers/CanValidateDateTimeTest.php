@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -27,9 +23,29 @@ final class CanValidateDateTimeTest extends TestCase
     use CanValidateDateTime;
 
     /**
+     * @test
+     *
+     * @dataProvider providerForValidDateTime
+     */
+    public function shouldFindWhenValueIsDateTime(string $format, string $value): void
+    {
+        self::assertTrue($this->isDateTime($format, $value));
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider providerForInvalidDateTime
+     */
+    public function shouldFindWhenValueIsNotDateTime(string $format, string $value): void
+    {
+        self::assertFalse($this->isDateTime($format, $value));
+    }
+
+    /**
      * @return mixed[][]
      */
-    public function providerForValidDateTime(): array
+    public static function providerForValidDateTime(): array
     {
         return [
             ['Y-m-d', '2009-09-09'],
@@ -44,19 +60,9 @@ final class CanValidateDateTimeTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @dataProvider providerForValidDateTime
-     */
-    public function shouldFindWhenValueIsDateTime(string $format, string $value): void
-    {
-        self::assertTrue($this->isDateTime($format, $value));
-    }
-
-    /**
      * @return mixed[][]
      */
-    public function providerForInvalidDateTime(): array
+    public static function providerForInvalidDateTime(): array
     {
         return [
             ['Y-m-d', '0000-01-01'],
@@ -66,15 +72,5 @@ final class CanValidateDateTimeTest extends TestCase
             ['Y-m-d', '0000-12-00'],
             ['Y-m-d H:i:s', '1987-12-31'],
         ];
-    }
-
-    /**
-     * @test
-     *
-     * @dataProvider providerForInvalidDateTime
-     */
-    public function shouldFindWhenValueIsNotDateTime(string $format, string $value): void
-    {
-        self::assertFalse($this->isDateTime($format, $value));
     }
 }

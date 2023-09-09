@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -21,23 +17,12 @@ use Respect\Validation\Test\TestCase;
 /**
  * @covers \Respect\Validation\Rules\AbstractRule
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Gabriel Caruso <carusogabriel34@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  */
 final class AbstractRuleTest extends TestCase
 {
-    /**
-     * @return bool[][]
-     */
-    public function providerForTrueAndFalse(): array
-    {
-        return [
-            [true],
-            [false],
-        ];
-    }
-
     /**
      * @dataProvider providerForTrueAndFalse
      * @covers       \Respect\Validation\Rules\AbstractRule::__invoke
@@ -50,7 +35,6 @@ final class AbstractRuleTest extends TestCase
 
         $abstractRuleMock = $this
             ->getMockBuilder(AbstractRule::class)
-            ->setMethods(['validate'])
             ->getMockForAbstractClass();
 
         $abstractRuleMock
@@ -79,7 +63,7 @@ final class AbstractRuleTest extends TestCase
 
         $abstractRuleMock = $this
             ->getMockBuilder(AbstractRule::class)
-            ->setMethods(['validate', 'reportError'])
+            ->onlyMethods(['validate', 'reportError'])
             ->getMockForAbstractClass();
 
         $abstractRuleMock
@@ -96,18 +80,23 @@ final class AbstractRuleTest extends TestCase
     }
 
     /**
-     * @covers            \Respect\Validation\Rules\AbstractRule::assert
-     * @expectedException \Respect\Validation\Exceptions\ValidationException
+     * @covers \Respect\Validation\Rules\AbstractRule::assert
      *
      * @test
      */
     public function assertInvokesValidateAndReportErrorOnFailure(): void
     {
         $input = 'something';
+        $exception = new ValidationException(
+            $input,
+            'abstract',
+            [],
+            new Formatter('strval', new KeepOriginalStringName())
+        );
 
         $abstractRuleMock = $this
             ->getMockBuilder(AbstractRule::class)
-            ->setMethods(['validate', 'reportError'])
+            ->onlyMethods(['validate', 'reportError'])
             ->getMockForAbstractClass();
 
         $abstractRuleMock
@@ -120,9 +109,9 @@ final class AbstractRuleTest extends TestCase
             ->expects(self::once())
             ->method('reportError')
             ->with($input)
-            ->will(self::throwException(
-                new ValidationException($input, 'abstract', [], new Formatter('strval', new KeepOriginalStringName()))
-            ));
+            ->will(self::throwException($exception));
+
+        $this->expectExceptionObject($exception);
 
         $abstractRuleMock->assert($input);
     }
@@ -138,7 +127,7 @@ final class AbstractRuleTest extends TestCase
 
         $abstractRuleMock = $this
             ->getMockBuilder(AbstractRule::class)
-            ->setMethods(['assert'])
+            ->onlyMethods(['assert'])
             ->getMockForAbstractClass();
 
         $abstractRuleMock
@@ -194,5 +183,16 @@ final class AbstractRuleTest extends TestCase
         $abstractRuleMock->setName($name);
 
         self::assertSame($name, $abstractRuleMock->getName());
+    }
+
+    /**
+     * @return bool[][]
+     */
+    public static function providerForTrueAndFalse(): array
+    {
+        return [
+            [true],
+            [false],
+        ];
     }
 }

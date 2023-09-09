@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -48,7 +44,7 @@ final class Luhn extends AbstractRule
         $parity = $numDigits % 2;
         for ($i = 0; $i < $numDigits; ++$i) {
             $digit = $digits[$i];
-            if ($parity == ($i % 2)) {
+            if ($parity == $i % 2) {
                 $digit <<= 1;
                 if (9 < $digit) {
                     $digit = $digit - 9;
@@ -57,6 +53,6 @@ final class Luhn extends AbstractRule
             $sum += $digit;
         }
 
-        return ($sum % 10) == 0;
+        return $sum % 10 == 0;
     }
 }

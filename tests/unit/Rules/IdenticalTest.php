@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -26,9 +22,21 @@ use stdClass;
 final class IdenticalTest extends RuleTestCase
 {
     /**
+     * @test
+     */
+    public function shouldPassCompareToParameterToException(): void
+    {
+        $compareTo = new stdClass();
+        $rule = new Identical($compareTo);
+        $exception = $rule->reportError('input');
+
+        self::assertSame($compareTo, $exception->getParam('compareTo'));
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         $object = new stdClass();
 
@@ -44,7 +52,7 @@ final class IdenticalTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         return [
             [new Identical(42), '42'],
@@ -53,17 +61,5 @@ final class IdenticalTest extends RuleTestCase
             [new Identical(new stdClass()), new stdClass()],
             [new Identical(10), 10.0],
         ];
-    }
-
-    /**
-     * @test
-     */
-    public function shouldPassCompareToParameterToException(): void
-    {
-        $compareTo = new stdClass();
-        $rule = new Identical($compareTo);
-        $exception = $rule->reportError('input');
-
-        self::assertSame($compareTo, $exception->getParam('compareTo'));
     }
 }

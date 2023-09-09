@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -40,82 +36,6 @@ final class YesTest extends RuleTestCase
     private $locale;
 
     /**
-     * {@inheritDoc}
-     */
-    protected function setUp(): void
-    {
-        $this->locale = (string) setlocale(LC_ALL, '0');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown(): void
-    {
-        setlocale(LC_ALL, $this->locale);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function providerForValidInput(): array
-    {
-        $sut = new Yes();
-
-        return [
-            'Y' => [$sut, 'Y'],
-            'Yea' => [$sut, 'Yea'],
-            'Yeah' => [$sut, 'Yeah'],
-            'Yep' => [$sut, 'Yep'],
-            'Yes' => [$sut, 'Yes'],
-            'with locale + starting with "Y"' => [new Yes(true), 'Yydoesnotmatter'],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function providerForInvalidInput(): array
-    {
-        $sut = new Yes();
-
-        return [
-            'spanish' => [$sut, 'Si'],
-            'portuguese' => [$sut, 'Sim'],
-            'starting with "Y"' => [$sut, 'Yoo'],
-            'boolean true' => [$sut, true],
-            'array' => [$sut, ['Yes']],
-            'object' => [$sut, new stdClass()],
-            'int' => [$sut, random_int(1, PHP_INT_MAX)],
-            'float' => [$sut, random_int(1, 9) / 10],
-        ];
-    }
-
-    /**
-     * @return string[][]
-     */
-    public function providerForValidInputWithLocale(): array
-    {
-        return [
-            'nl' => ['nl_NL.UTF-8', 'Ja'],
-            'pt' => ['pt_BR.UTF-8', 'Sim'],
-            'ru' => ['ru_RU.UTF-8', 'да'],
-        ];
-    }
-
-    /**
-     * @return string[][]
-     */
-    public function providerForInvalidInputWithLocale(): array
-    {
-        return [
-            'nl' => ['nl_NL.UTF-8', 'Sim'],
-            'pt' => ['pt_BR.UTF-8', 'да'],
-            'ru' => ['ru_RU.UTF-8', 'Ja'],
-        ];
-    }
-
-    /**
      * @test
      *
      * @dataProvider providerForValidInputWithLocale
@@ -145,5 +65,81 @@ final class YesTest extends RuleTestCase
         }
 
         self::assertInvalidInput(new Yes(true), $input);
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function providerForValidInputWithLocale(): array
+    {
+        return [
+            'nl' => ['nl_NL.UTF-8', 'Ja'],
+            'pt' => ['pt_BR.UTF-8', 'Sim'],
+            'ru' => ['ru_RU.UTF-8', 'да'],
+        ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    public static function providerForInvalidInputWithLocale(): array
+    {
+        return [
+            'nl' => ['nl_NL.UTF-8', 'Sim'],
+            'pt' => ['pt_BR.UTF-8', 'да'],
+            'ru' => ['ru_RU.UTF-8', 'Ja'],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function providerForValidInput(): array
+    {
+        $sut = new Yes();
+
+        return [
+            'Y' => [$sut, 'Y'],
+            'Yea' => [$sut, 'Yea'],
+            'Yeah' => [$sut, 'Yeah'],
+            'Yep' => [$sut, 'Yep'],
+            'Yes' => [$sut, 'Yes'],
+            'with locale + starting with "Y"' => [new Yes(true), 'Yydoesnotmatter'],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function providerForInvalidInput(): array
+    {
+        $sut = new Yes();
+
+        return [
+            'spanish' => [$sut, 'Si'],
+            'portuguese' => [$sut, 'Sim'],
+            'starting with "Y"' => [$sut, 'Yoo'],
+            'boolean true' => [$sut, true],
+            'array' => [$sut, ['Yes']],
+            'object' => [$sut, new stdClass()],
+            'int' => [$sut, random_int(1, PHP_INT_MAX)],
+            'float' => [$sut, random_int(1, 9) / 10],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function setUp(): void
+    {
+        $this->locale = (string) setlocale(LC_ALL, '0');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function tearDown(): void
+    {
+        setlocale(LC_ALL, $this->locale);
     }
 }

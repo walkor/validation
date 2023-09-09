@@ -1,18 +1,17 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
 
 namespace Respect\Validation\Rules;
 
+use Respect\Validation\Exceptions\AllOfException;
+use Respect\Validation\Exceptions\CallbackException;
+use Respect\Validation\Exceptions\ValidationException;
 use Respect\Validation\Test\TestCase;
 use Respect\Validation\Validatable;
 
@@ -21,7 +20,7 @@ use Respect\Validation\Validatable;
  * @covers \Respect\Validation\Exceptions\AllOfException
  * @covers \Respect\Validation\Rules\AllOf
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Gabriel Caruso <carusogabriel34@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  * @author Nick Lombard <github@jigsoft.co.za>
@@ -53,7 +52,6 @@ final class AllOfTest extends TestCase
 
     /**
      * @dataProvider providerStaticDummyRules
-     * @expectedException \Respect\Validation\Exceptions\AllOfException
      *
      * @test
      */
@@ -64,12 +62,13 @@ final class AllOfTest extends TestCase
     ): void {
         $o = new AllOf($rule1, $rule2, $rule3);
         self::assertFalse($o->__invoke('any'));
+
+        $this->expectException(AllOfException::class);
         $o->assert('any');
     }
 
     /**
      * @dataProvider providerStaticDummyRules
-     * @expectedException \Respect\Validation\Exceptions\CallbackException
      *
      * @test
      */
@@ -80,12 +79,14 @@ final class AllOfTest extends TestCase
     ): void {
         $o = new AllOf($rule1, $rule2, $rule3);
         self::assertFalse($o->__invoke('any'));
+
+        $this->expectException(CallbackException::class);
         $o->check('any');
     }
 
     /**
      * @dataProvider providerStaticDummyRules
-     * @expectedException \Respect\Validation\Exceptions\ValidationException
+     * @expectedException \Respect\Validation\Exceptions\
      *
      * @test
      */
@@ -95,6 +96,8 @@ final class AllOfTest extends TestCase
         Validatable $rule3
     ): void {
         $o = new AllOf($rule1, $rule2, $rule3);
+
+        $this->expectException(ValidationException::class);
         $o->check('');
     }
 
@@ -115,7 +118,7 @@ final class AllOfTest extends TestCase
     /**
      * @return Validatable[][]
      */
-    public function providerStaticDummyRules(): array
+    public static function providerStaticDummyRules(): array
     {
         $theInvalidOne = new Callback(static function () {
             return false;

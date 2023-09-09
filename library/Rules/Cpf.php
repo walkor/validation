@@ -1,18 +1,15 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
 
 namespace Respect\Validation\Rules;
 
+use function intval;
 use function mb_strlen;
 use function preg_match;
 use function preg_replace;
@@ -20,7 +17,7 @@ use function preg_replace;
 /**
  * Validates whether the input is a CPF (Brazilian Natural Persons Register) number.
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  * @author Jair Henrique <jair.henrique@gmail.com>
  * @author Jayson Reis <santosdosreis@gmail.com>
@@ -43,7 +40,7 @@ final class Cpf extends AbstractRule
 
         $n = 0;
         for ($s = 10, $i = 0; $s >= 2; ++$i, --$s) {
-            $n += $c[$i] * $s;
+            $n += intval($c[$i]) * $s;
         }
 
         if ($c[9] != (($n %= 11) < 2 ? 0 : 11 - $n)) {
@@ -52,7 +49,7 @@ final class Cpf extends AbstractRule
 
         $n = 0;
         for ($s = 11, $i = 0; $s >= 2; ++$i, --$s) {
-            $n += $c[$i] * $s;
+            $n += intval($c[$i]) * $s;
         }
 
         $check = ($n %= 11) < 2 ? 0 : 11 - $n;

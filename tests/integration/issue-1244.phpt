@@ -5,18 +5,12 @@ declare(strict_types=1);
 
 require 'vendor/autoload.php';
 
-use Respect\Validation\Exceptions\NestedValidationException;
 use Respect\Validation\Validator as v;
 
-try {
-    v::key('firstname', v::notBlank()->setName('First Name'))->assert([]);
-} catch (NestedValidationException $e) {
-    print_r($e->getMessages());
-}
-
+exceptionMessages(static fn () => v::key('firstname', v::notBlank()->setName('First Name'))->assert([]));
 ?>
 --EXPECTF--
 Array
 (
-    [First Name] => Key First Name must be present
+    [First Name] => First Name must be present
 )

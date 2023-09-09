@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -27,41 +23,6 @@ use stdClass;
  */
 final class OptionalTest extends TestCase
 {
-    /**
-     * @return mixed[][]
-     */
-    public function providerForOptional(): array
-    {
-        return [
-            [null],
-            [''],
-        ];
-    }
-
-    /**
-     * @return mixed[][]
-     */
-    public function providerForNotOptional(): array
-    {
-        return [
-            [1],
-            [[]],
-            [' '],
-            [0],
-            ['0'],
-            [0],
-            ['0.0'],
-            [false],
-            [['']],
-            [[' ']],
-            [[0]],
-            [['0']],
-            [[false]],
-            [[[''], [0]]],
-            [new stdClass()],
-        ];
-    }
-
     /**
      * @dataProvider providerForOptional
      *
@@ -168,5 +129,40 @@ final class OptionalTest extends TestCase
         $rule = new Optional($validatable);
 
         $rule->check($input);
+    }
+
+    /**
+     * @return mixed[][]
+     */
+    public static function providerForOptional(): array
+    {
+        return [
+            [null],
+            [''],
+        ];
+    }
+
+    /**
+     * @return mixed[][]
+     */
+    public static function providerForNotOptional(): array
+    {
+        return [
+            [1],
+            [[]],
+            [' '],
+            [0],
+            ['0'],
+            [0],
+            ['0.0'],
+            [false],
+            [['']],
+            [[' ']],
+            [[0]],
+            [['0']],
+            [[false]],
+            [[[''], [0]]],
+            [new stdClass()],
+        ];
     }
 }

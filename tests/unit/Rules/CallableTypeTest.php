@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -14,6 +10,7 @@ declare(strict_types=1);
 namespace Respect\Validation\Rules;
 
 use Respect\Validation\Test\RuleTestCase;
+use Respect\Validation\Test\Stubs\WithMethods;
 use stdClass;
 
 use const INF;
@@ -31,26 +28,22 @@ final class CallableTypeTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         $rule = new CallableType();
 
         return [
-            [
-                $rule,
-                static function (): void {
-                },
-            ],
+            [$rule, static fn() => null],
             [$rule, 'trim'],
-            [$rule, __METHOD__],
-            [$rule, [$this, __FUNCTION__]],
+            [$rule, WithMethods::class . '::publicStaticMethod'],
+            [$rule, [new WithMethods(), 'publicMethod']],
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         $rule = new CallableType();
 

@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -15,7 +11,6 @@ namespace Respect\Validation\Rules;
 
 use function end;
 use function is_array;
-use function mb_detect_encoding;
 use function mb_strlen;
 use function mb_strripos;
 use function mb_strrpos;
@@ -23,7 +18,7 @@ use function mb_strrpos;
 /**
  * Validates only if the value is at the end of the input.
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  * @author Hugo Hamon <hugo.hamon@sensiolabs.com>
  * @author William Espindola <oi@williamespindola.com.br>
@@ -70,10 +65,7 @@ final class EndsWith extends AbstractRule
             return end($input) == $this->endValue;
         }
 
-        $encoding = (string) mb_detect_encoding($input);
-        $endPosition = mb_strlen($input, $encoding) - mb_strlen($this->endValue, $encoding);
-
-        return mb_strripos($input, $this->endValue, -1, $encoding) === $endPosition;
+        return mb_strripos($input, $this->endValue) === mb_strlen($input) - mb_strlen($this->endValue);
     }
 
     /**
@@ -85,9 +77,6 @@ final class EndsWith extends AbstractRule
             return end($input) === $this->endValue;
         }
 
-        $encoding = (string) mb_detect_encoding($input);
-        $endPosition = mb_strlen($input, $encoding) - mb_strlen($this->endValue, $encoding);
-
-        return mb_strrpos($input, $this->endValue, 0, $encoding) === $endPosition;
+        return mb_strrpos($input, $this->endValue) === mb_strlen($input) - mb_strlen($this->endValue);
     }
 }

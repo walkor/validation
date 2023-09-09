@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -14,6 +10,7 @@ declare(strict_types=1);
 namespace Respect\Validation\Rules;
 
 use Respect\Validation\Test\RuleTestCase;
+use Respect\Validation\Test\Stubs\StreamStub;
 use SplFileInfo;
 use SplFileObject;
 use stdClass;
@@ -34,30 +31,36 @@ final class WritableTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         $sut = new Writable();
-        $filename = $this->getFixtureDirectory() . '/valid-image.png';
+        $filename = self::fixture('valid-image.png');
+        $directory = self::fixture();
+
+        chmod($filename, 0644);
+        chmod($directory, 0755);
 
         return [
             'writable file' => [$sut, $filename],
-            'writable directory' => [$sut, $this->getFixtureDirectory()],
+            'writable directory' => [$sut, $directory],
             'writable SplFileInfo file' => [$sut, new SplFileInfo($filename)],
             'writable SplFileObject file' => [$sut, new SplFileObject($filename)],
+            'writable PSR-7 stream' => [$sut, StreamStub::create()],
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         $rule = new Writable();
-        $filename = $this->getFixtureDirectory() . '/non-writable';
+        $filename = self::fixture('non-writable');
 
-        $this->changeFileModeToUnwritable($filename);
+        chmod($filename, 0555);
 
         return [
+            'unwritable PSR-7 stream' => [$rule, StreamStub::createUnwritable()],
             'unwritable filename' => [$rule, $filename],
             'unwritable SplFileInfo file' => [$rule, new SplFileInfo($filename)],
             'unwritable SplFileObject file' => [$rule, new SplFileObject($filename)],
@@ -70,10 +73,5 @@ final class WritableTest extends RuleTestCase
             'instance of stdClass' => [$rule, new stdClass()],
             'array' => [$rule, []],
         ];
-    }
-
-    private function changeFileModeToUnwritable(string $filename): void
-    {
-        chmod($filename, 0555);
     }
 }

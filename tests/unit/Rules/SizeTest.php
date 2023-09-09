@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -15,7 +11,10 @@ namespace Respect\Validation\Rules;
 
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
+use Respect\Validation\Exceptions\ComponentException;
 use Respect\Validation\Test\RuleTestCase;
+use Respect\Validation\Test\Stubs\StreamStub;
+use Respect\Validation\Test\Stubs\UploadedFileStub;
 use SplFileInfo;
 
 /**
@@ -30,9 +29,20 @@ use SplFileInfo;
 final class SizeTest extends RuleTestCase
 {
     /**
+     * @test
+     */
+    public function shouldThrowsAnExceptionWhenSizeIsNotValid(): void
+    {
+        $this->expectException(ComponentException::class);
+        $this->expectExceptionMessage('"42jb" is not a recognized file size');
+
+        new Size('42jb');
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         $root = vfsStream::setup();
         $file2Kb = vfsStream::newFile('2kb.txt')
@@ -54,13 +64,15 @@ final class SizeTest extends RuleTestCase
             'file with up to 3mb' => [new Size(null, '3mb'), $file2Mb->url()],
             'file between 1mb and 3mb' => [new Size('1mb', '3mb'), $file2Mb->url()],
             'SplFileInfo instance' => [new Size('1mb', '3mb'), new SplFileInfo($file2Mb->url())],
+            'PSR-7 stream' => [new Size('1kb', '2kb'), StreamStub::createWithSize(1024)],
+            'PSR-7 UploadedFile' => [new Size('1kb', '2kb'), UploadedFileStub::createWithSize(1024)],
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         $root = vfsStream::setup();
         $file2Kb = vfsStream::newFile('2kb.txt')
@@ -80,17 +92,8 @@ final class SizeTest extends RuleTestCase
             'file between 1pb and 3pb' => [new Size('1pb', '3pb'), $file2Mb->url()],
             'SplFileInfo instancia' => [new Size('1pb', '3pb'), new SplFileInfo($file2Mb->url())],
             'parameter invalid' => [new Size('1pb', '3pb'), []],
+            'PSR-7 stream' => [new Size('1MB', '1.1MB'), StreamStub::createWithSize(1024)],
+            'PSR-7 UploadedFile' => [new Size('1MB', '1.1MB'), UploadedFileStub::createWithSize(1024)],
         ];
-    }
-
-    /**
-     * @expectedException \Respect\Validation\Exceptions\ComponentException
-     * @expectedExceptionMessage "42jb" is not a recognized file size
-     *
-     * @test
-     */
-    public function shouldThrowsAnExceptionWhenSizeIsNotValid(): void
-    {
-        new Size('42jb');
     }
 }

@@ -1,12 +1,8 @@
 <?php
 
 /*
- * This file is part of Respect/Validation.
- *
- * (c) Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
+ * Copyright (c) Alexandre Gomes Gaigalas <alganet@gmail.com>
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -14,6 +10,7 @@ declare(strict_types=1);
 namespace Respect\Validation\Rules;
 
 use DateTime;
+use Respect\Validation\Exceptions\ComponentException;
 use Respect\Validation\Test\RuleTestCase;
 use Respect\Validation\Test\Stubs\CountableStub;
 
@@ -23,16 +20,36 @@ use Respect\Validation\Test\Stubs\CountableStub;
  * @covers \Respect\Validation\Rules\AbstractEnvelope
  * @covers \Respect\Validation\Rules\Between
  *
- * @author Alexandre Gomes Gaigalas <alexandre@gaigalas.net>
+ * @author Alexandre Gomes Gaigalas <alganet@gmail.com>
  * @author Emmerson Siqueira <emmersonsiqueira@gmail.com>
  * @author Henrique Moody <henriquemoody@gmail.com>
  */
 final class BetweenTest extends RuleTestCase
 {
     /**
+     * @test
+     */
+    public function minimumValueShouldNotBeGreaterThanMaximumValue(): void
+    {
+        $this->expectExceptionObject(new ComponentException('Minimum cannot be less than or equals to maximum'));
+
+        new Between(10, 5);
+    }
+
+    /**
+     * @test
+     */
+    public function minimumValueShouldNotBeEqualsToMaximumValue(): void
+    {
+        $this->expectExceptionObject(new ComponentException('Minimum cannot be less than or equals to maximum'));
+
+        new Between(5, 5);
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public function providerForValidInput(): array
+    public static function providerForValidInput(): array
     {
         return [
             [new Between(0, 1), 1],
@@ -50,7 +67,7 @@ final class BetweenTest extends RuleTestCase
     /**
      * {@inheritDoc}
      */
-    public function providerForInvalidInput(): array
+    public static function providerForInvalidInput(): array
     {
         return [
             [new Between(10, 20), ''],
@@ -63,27 +80,5 @@ final class BetweenTest extends RuleTestCase
             [new Between(new DateTime('yesterday'), new DateTime('now')), new DateTime('tomorrow')],
             [new Between(new CountableStub(1), new CountableStub(10)), 11],
         ];
-    }
-
-    /**
-     * @test
-     *
-     * @expectedException \Respect\Validation\Exceptions\ComponentException
-     * @expectedExceptionMessage Minimum cannot be less than or equals to maximum
-     */
-    public function minimumValueShouldNotBeGreaterThanMaximumValue(): void
-    {
-        new Between(10, 5);
-    }
-
-    /**
-     * @test
-     *
-     * @expectedException \Respect\Validation\Exceptions\ComponentException
-     * @expectedExceptionMessage Minimum cannot be less than or equals to maximum
-     */
-    public function minimumValueShouldNotBeEqualsToMaximumValue(): void
-    {
-        new Between(5, 5);
     }
 }

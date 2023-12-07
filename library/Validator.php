@@ -85,7 +85,7 @@ final class Validator extends AllOf
     {
         $values = [];
         foreach ($rules as $field => $rule) {
-            if(is_array($rule)){
+            if(is_array($rule) || !($rule instanceof \Respect\Validation\Validator)){
                 $values[$field] = $rule;
             }else{
                 $value = $rule->defaultType?$rule->default:($input[$field] ?? $rule->default);

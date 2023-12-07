@@ -40,6 +40,7 @@ interface Validatable
 
     public function setTemplate(string $template): Validatable;
 
+    public function setDefault(string $default, bool $defaultType=false): Validatable;
     /**
      * @param mixed $input
      */

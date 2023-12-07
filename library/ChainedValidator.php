@@ -286,6 +286,7 @@ interface ChainedValidator extends Validatable
 
     public function phone(): ChainedValidator;
 
+    public function mobile(): ChainedValidator;
     public function phpLabel(): ChainedValidator;
 
     public function pis(): ChainedValidator;

@@ -288,6 +288,7 @@ interface StaticValidator
 
     public static function phone(): ChainedValidator;
 
+    public static function mobile(): ChainedValidator;
     public static function phpLabel(): ChainedValidator;
 
     public static function pis(): ChainedValidator;

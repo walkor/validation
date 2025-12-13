@@ -38,8 +38,6 @@ final class Attribute extends AbstractRelated
     public function getReferenceValue($input)
     {
         $propertyMirror = new ReflectionProperty($input, (string) $this->getReference());
-        $propertyMirror->setAccessible(true);
-
         return $propertyMirror->getValue($input);
     }
 

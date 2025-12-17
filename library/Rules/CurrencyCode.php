@@ -156,7 +156,6 @@ final class CurrencyCode extends AbstractSearcher
             'SGD', // Singapore Dollar
             'SHP', // Saint Helena Pound
             'SLE', // Leone
-            'SLL', // Leone
             'SOS', // Somali Shilling
             'SRD', // Surinam Dollar
             'SSP', // South Sudanese Pound
